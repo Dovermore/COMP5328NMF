@@ -7,7 +7,7 @@ import numpy as np
 
 
 class BaseNmfEstimator(BaseEstimator, TransformerMixin):
-    def __init__(self, k, max_iter=1e5, output_image=False, verbose=0):
+    def __init__(self, k=2, max_iter=1e5, output_image=False, verbose=0):
         """
         TODO: docstring
         """
