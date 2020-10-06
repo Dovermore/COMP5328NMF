@@ -1,36 +1,39 @@
 # This file holds NMF algorithm with l2 norm loss
 # Author: Calvin Huang (zhuq9812)
 
-from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
-import scipy as sp
+from .base_nmf import BaseNmfEstimator
 
 
-class NmfL2Estimator(BaseEstimator, TransformerMixin):
+class NmfL2Estimator(BaseNmfEstimator):
     """
     Base class for nmf l2 estimator. Uses sklearn skeleton for better coherence
     with other parts of the codes.
+
+    For now only the function for updating D, R, loss should be updated
     """
 
-    def __init__(self, ):
+    def get_next_R(self, X, D, R):
         """
-        TODO
+        Compute the next value of R based on given input, D and R
 
-        inputs: dimension
+        This is the update rule for l2
         """
-        # store hyper parameters
-        # TODO
-        self.R = np.zeros(1)
-        pass
+        next_R = R * ((D.T @ X) / (D.T @ D @ R))
+        return next_R
 
-    def fit(self, X, y=None):
+    def get_next_D(self, X, D, R):
         """
-        TODO
-        """
-        pass
+        Compute the next value of D based on given input, D and R
 
-    def transform(self, X, y=None):
+        This is the update rule for l2
         """
-        TODO
+        next_D = D * ((X @ R.T) / (D @ R @ R.T))
+        return next_D
+
+    @classmethod
+    def loss(cls, X, D, R):
         """
-        pass
+        use the default l2 loss
+        """
+        return super().loss(X, D, R)
