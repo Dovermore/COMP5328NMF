@@ -7,7 +7,7 @@ import numpy as np
 
 
 class BaseNmfEstimator(BaseEstimator, TransformerMixin):
-    def __init__(self, k, max_iter=1e5, verbose=0):
+    def __init__(self, k, max_iter=1e5, output_image=False, verbose=0):
         """
         TODO: docstring
         """
@@ -15,6 +15,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         self.k = k
         self.max_iter = max_iter
         self.verbose = verbose
+        self.output_image = output_image
 
         # Use null matrix as placeholder
         self.D = np.zeros(0)
@@ -96,12 +97,16 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
                 break
             # else assign and continue to next iteration
             R = next_R
+        if self.output_image:
+            return self.D @ R
         return R
 
     def fit_transform(self, X, y=None, **fit_params):
-        self.fit(X)
+        self.fit(X, **fit_params)
         # Fit then return the lower dimension R values
-        return self.R
+        if self.output_image:
+            return self.D @ self.R
+        return R
 
     def get_next_R(self, X, D, R):
         """
