@@ -4,6 +4,7 @@
 - The repo structure is
     - base
         - src (codes)
-        - util (place ploting/meesage printing/gradient checking here)
-        - algs (algorithms here)
-        - preprocessing (noise algorithm and cropping functions here)
+            - data (this is only locally stored, I have ignored data files from .gitignore, so they won't be pushed to remote)
+            - util (place ploting/meesage printing/gradient checking here)
+            - algs (algorithms here)
+            - preprocessing (noise algorithm and cropping functions here)
