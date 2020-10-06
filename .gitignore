@@ -318,4 +318,4 @@ Temporary Items
 
 
 # Ignore the data files
-data/**
+src/data/**
