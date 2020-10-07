@@ -14,8 +14,8 @@ class NmfHyperEstimator(BaseNmfEstimator):
     """
 
     def __init__(self, n_components=2, tau=0.5, c=0.5, alpha0=1, beta0=1,
-                 max_armijo=1e4, max_iter=1e5, output_image=False,
-                 verbose=0, log_interval=100):
+                 max_armijo=100, max_iter=200, output_image=False,
+                 verbose=0, log_interval=np.inf):
         super().__init__(n_components=n_components, max_iter=max_iter,
                          output_image=output_image, verbose=verbose,
                          log_interval=log_interval)
