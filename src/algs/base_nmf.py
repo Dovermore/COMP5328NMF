@@ -7,7 +7,8 @@ import numpy as np
 
 
 class BaseNmfEstimator(BaseEstimator, TransformerMixin):
-    def __init__(self, k=2, max_iter=1e5, output_image=False, verbose=0):
+    def __init__(self, k=2, max_iter=1e5, output_image=False,
+                 verbose=0, log_interval=100):
         """
         TODO: docstring
         """
@@ -16,6 +17,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         self.max_iter = max_iter
         self.verbose = verbose
         self.output_image = output_image
+        self.log_interval = log_interval
 
         # Use null matrix as placeholder
         self.D = np.zeros(0)
@@ -54,7 +56,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         # At most max iter times
         iter = 0
         while iter < self.max_iter:
-            if self.verbose > 0:
+            if self.verbose > 0 or (iter+1) % self.log_interval == 0:
                 loss = self.loss(X, self.D, self.R)
                 print("Iteration: %-4d | loss: %-10.3f" % (iter, loss))
 
@@ -74,6 +76,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
             # else assign and continue to next iteration
             self.R = next_R
             self.D = next_D
+        return self
 
     def _update_DR(self, X):
         """Default updating option is to update R then based on that update D"""
