@@ -13,11 +13,12 @@ class NmfHyperEstimator(BaseNmfEstimator):
     For now only the function for updating D, R, loss should be updated
     """
 
-    def __init__(self, k=2, tau=0.5, c=0.5, alpha0=1, beta0=1,
+    def __init__(self, n_components=2, tau=0.5, c=0.5, alpha0=1, beta0=1,
                  max_armijo=1e4, max_iter=1e5, output_image=False,
                  verbose=0, log_interval=100):
-        super().__init__(k=k, max_iter=max_iter, output_image=output_image,
-                         verbose=verbose, log_interval=log_interval)
+        super().__init__(n_components=n_components, max_iter=max_iter,
+                         output_image=output_image, verbose=verbose,
+                         log_interval=log_interval)
         self.tau = tau
         self.c = c
         self.alpha0 = alpha0

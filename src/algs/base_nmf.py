@@ -7,13 +7,13 @@ import numpy as np
 
 
 class BaseNmfEstimator(BaseEstimator, TransformerMixin):
-    def __init__(self, k=2, max_iter=1e5, output_image=False,
-                 verbose=0, log_interval=100):
+    def __init__(self, n_components=2, max_iter=200, output_image=False,
+                 verbose=0, log_interval=np.inf):
         """
         TODO: docstring
         """
         # store hyper parameters
-        self.k = k
+        self.n_components = n_components
         self.max_iter = max_iter
         self.verbose = verbose
         self.output_image = output_image
@@ -33,8 +33,8 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         d, n = X.shape
 
         # Initialize D and R usd in the fitting process
-        self.D = np.abs(np.random.randn(d, self.k))
-        self.R = np.abs(np.random.randn(self.k, n))
+        self.D = np.abs(np.random.randn(d, self.n_components))
+        self.R = np.abs(np.random.randn(self.n_components, n))
 
     @classmethod
     def loss(cls, X, D, R):
@@ -56,7 +56,8 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         # At most max iter times
         iter = 0
         while iter < self.max_iter:
-            if self.verbose > 0 or (iter+1) % self.log_interval == 0:
+            if self.verbose > 0 or (iter % self.log_interval == 0 and
+                                    self.log_interval != np.inf):
                 loss = self.loss(X, self.D, self.R)
                 print("Iteration: %-4d | loss: %-10.3f" % (iter, loss))
 
@@ -89,7 +90,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
     def _terminate(self, X, D, R, next_D, next_R):
         return np.array_equal(self.R, next_R) and np.array_equal(self.D, next_D)
 
-    def transform(self, X, y=None):
+    def encode(self, X, y=None):
         """
         Takes input and transform according to fitted model
         """
@@ -103,7 +104,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
             next_R = self.get_next_R(X, self.D, R)
             iter += 1
             # arrive at stable values, break the loop
-            if np.array_equal(R, next_R):
+            if self._terminate(X, self.D, R, self.D, next_R):
                 break
             # else assign and continue to next iteration
             R = next_R
@@ -116,7 +117,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         # Fit then return the lower dimension R values
         if self.output_image:
             return self.D @ self.R
-        return R
+        return self.D
 
     def get_next_R(self, X, D, R):
         """
@@ -133,3 +134,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         Placeholder function to be overriden
         """
         return D
+
+    @property
+    def components_(self):
+        return self.R
