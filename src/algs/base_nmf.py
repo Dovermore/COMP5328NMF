@@ -21,7 +21,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         self.D = np.zeros(0)
         self.R = np.zeros(0)
 
-    def init_RD(self, X):
+    def init_DR(self, X):
         """
         TODO: docstring
         Initializes R and D matrix from give input matrix X
@@ -49,7 +49,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         TODO
         """
         # Initialize R and D
-        self.init_RD(X)
+        self.init_DR(X)
 
         # At most max iter times
         iter = 0
@@ -64,24 +64,27 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
                 if self.verbose > 1:
                     print("                |  avgD: %-10.3f, avgR: %-10.3f" %
                           (D_avg, R_avg))
-            next_R, next_D = self._update_RD(X)
+            next_R, next_D = self._update_DR(X)
             iter += 1
 
             # arrive at stable values, break the loop
-            if np.array_equal(self.R, next_R) and np.array_equal(self.D, next_D):
+            if self._terminate(X, self.R, self.D, next_R, next_D):
                 break
 
             # else assign and continue to next iteration
             self.R = next_R
             self.D = next_D
 
-    def _update_RD(self, X):
+    def _update_DR(self, X):
         """Default updating option is to update R then based on that update D"""
         # get Rn+1 based on Rn, Dn
         next_R = self.get_next_R(X, self.D, self.R)
         # get Dn+1 based on Rn+1, Dn
         next_D = self.get_next_D(X, self.D, next_R)
         return next_R, next_D
+
+    def _terminate(self, X, D, R, next_D, next_R):
+        return np.array_equal(self.R, next_R) and np.array_equal(self.D, next_D)
 
     def transform(self, X, y=None):
         """

@@ -27,13 +27,16 @@ class NmfHyperEstimator(BaseNmfEstimator):
         next_D = self.get_next_D(X, self.D, self.R)
         return next_R, next_D
 
+    def _terminate(self, X, R, D, next_R, next_D):
+        pass
+
     def get_next_D(self, X, D, R):
         """
         Compute the next value of D based on given input, D and R
 
         This is the update rule for l2
         """
-        dD = ((D @ R @ R.T) - (X @ R.T)) / np.sqrt(1 + np.linalg.norm(X - D @ R))
+        dD = -((D @ R @ R.T) - (X @ R.T)) / np.sqrt(1 + np.linalg.norm(X - D @ R))
         alpha = self.armijo_search_D(X, D, R, dD)
         next_D = D - alpha * dD
         return next_D
@@ -44,7 +47,7 @@ class NmfHyperEstimator(BaseNmfEstimator):
 
         This is the update rule for l2
         """
-        dR = ((D.T @ D @ R) - (D.T @ X)) / np.sqrt(1 + np.linalg.norm(X - D @ R))
+        dR = -((D.T @ D @ R) - (D.T @ X)) / np.sqrt(1 + np.linalg.norm(X - D @ R))
         beta = self.armijo_search_R(X, D, R, dR)
         next_R = R - beta * dR
         return next_R
@@ -57,24 +60,25 @@ class NmfHyperEstimator(BaseNmfEstimator):
         return np.sqrt(1 + super().loss(X, D, R)) - 1
 
     def armijo_search_D(self, X, D, R, dD):
-        m = -dD @ dD.T
+        m = -np.linalg.norm(dD.T @ dD)
         alpha = self.alpha0
         t = -self.c * m
         for i in range(self.max_armijo):
             diff = self.loss(X, D, R) - self.loss(X, D - alpha * dD, R)
-            if diff > alpha * t:
+            if diff >= alpha * t:
                 break
             alpha = alpha * self.tau
+            print(i, "alpha", alpha, diff, alpha * t)
         return alpha
 
     def armijo_search_R(self, X, D, R, dR):
-        m = -dR @ dR.T
+        m = -np.linalg.norm(dR.T @ dR)
         beta = self.beta0
         t = -self.c * m
         for i in range(self.max_armijo):
             diff = self.loss(X, D, R) - self.loss(X, D, R - beta * dR)
-            print(diff.shape, m.shape, dR.shape)
-            if diff > beta * t:
+            if diff >= beta * t:
                 break
             beta = beta * self.tau
+            print(i, "beta", beta, diff, beta * t)
         return beta
