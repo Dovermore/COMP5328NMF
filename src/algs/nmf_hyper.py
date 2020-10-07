@@ -22,6 +22,11 @@ class NmfHyperEstimator(BaseNmfEstimator):
         self.alpha0 = alpha0
         self.max_armijo = int(max_armijo)
 
+    def _update_RD(self, X):
+        next_R = self.get_next_R(X, self.D, self.R)
+        next_D = self.get_next_D(X, self.D, self.R)
+        return next_R, next_D
+
     def get_next_D(self, X, D, R):
         """
         Compute the next value of D based on given input, D and R
