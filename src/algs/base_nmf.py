@@ -64,7 +64,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
                 if self.verbose > 1:
                     print("                |  avgD: %-10.3f, avgR: %-10.3f" %
                           (D_avg, R_avg))
-            self._update_RD(X)
+            next_R, next_D = self._update_RD(X)
             iter += 1
 
             # arrive at stable values, break the loop
