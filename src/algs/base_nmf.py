@@ -64,11 +64,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
                 if self.verbose > 1:
                     print("                |  avgD: %-10.3f, avgR: %-10.3f" %
                           (D_avg, R_avg))
-
-            # get Rn+1 based on Rn, Dn
-            next_R = self.get_next_R(X, self.D, self.R)
-            # get Dn+1 based on Rn+1, Dn
-            next_D = self.get_next_D(X, self.D, next_R)
+            self._update_RD(X)
             iter += 1
 
             # arrive at stable values, break the loop
@@ -78,6 +74,14 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
             # else assign and continue to next iteration
             self.R = next_R
             self.D = next_D
+
+    def _update_RD(self, X):
+        """Default updating option is to update R then based on that update D"""
+        # get Rn+1 based on Rn, Dn
+        next_R = self.get_next_R(X, self.D, self.R)
+        # get Dn+1 based on Rn+1, Dn
+        next_D = self.get_next_D(X, self.D, next_R)
+        return next_R, next_D
 
     def transform(self, X, y=None):
         """
