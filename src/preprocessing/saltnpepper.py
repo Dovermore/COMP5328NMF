@@ -1,5 +1,7 @@
 import numpy as np
 
+#The following class deals with creating salt and pepper noise which controlled by 2 parameters.
+#Parameters: p for noise level(0-1), r for salt/pepper ratio (0-1)
 class noise():
     def __init__(self, image, p, r):
         self.image = image
@@ -7,8 +9,6 @@ class noise():
         self.r = r
 
     # Salt and pepper algs here.
-    #p for noise level(0-1), r for salt/pepper ratio (0-1)
-    
     def add_snp(self): 
         #row, col = image.shape
         out = np.copy(self.image)
