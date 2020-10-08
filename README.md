@@ -5,6 +5,7 @@
     - base
         - src (codes)
             - data (this is only locally stored, I have ignored data files from .gitignore, so they won't be pushed to remote)
+            - preprocessing (noise algorithm and cropping functions here)
             - util (place ploting/meesage printing/gradient checking here)
             - algs (algorithms here)
             - preprocessing (noise algorithm and cropping functions here)
