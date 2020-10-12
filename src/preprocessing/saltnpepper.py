@@ -10,13 +10,12 @@ class noise():
 
     # Salt and pepper algs here.
     def add_snp(self): 
-        #row, col = image.shape
         out = np.copy(self.image)
         # Salt mode
         num_salt = np.ceil(self.p * self.image.size * self.r)
         coords = [np.random.randint(0, i - 1, int(num_salt))
               for i in self.image.shape]
-        out[coords] = 255
+        out[coords] = 1
 
         # Pepper mode
         num_pepper = np.ceil(self.p * self.image.size * (1. - self.r))
