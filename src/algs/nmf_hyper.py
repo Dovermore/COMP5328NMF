@@ -28,6 +28,15 @@ class NmfHyperEstimator(BaseNmfEstimator):
         # stop counter for early stopping
         self.stop_counter = 0
 
+        # For improving performance (monitor max value and starting value)
+        self.sum_alpha = 0
+        self.amijo_iter_alpha = 0
+        self.amijo_call_alpha = 0
+
+        self.sum_beta = 0
+        self.amijo_iter_beta = 0
+        self.amijo_call_beta = 0
+
     def _update_RD(self, X):
         next_R = self.get_next_R(X, self.D, self.R)
         next_D = self.get_next_D(X, self.D, self.R)
@@ -75,10 +84,13 @@ class NmfHyperEstimator(BaseNmfEstimator):
         return np.sqrt(1 + super().loss(X, D, R)) - 1
 
     def armijo_search_D(self, X, D, R, dD):
+        self.amijo_call_alpha += 1
+
         m = -np.linalg.norm(dD.T @ dD)
         alpha = self.alpha0
         t = -self.c * m
         diff = -np.inf
+        i = 0
         for i in range(self.max_armijo):
             diff = self.loss(X, D, R) - self.loss(X, D - alpha * dD, R)
             # print(i, "alpha", alpha, diff, alpha * t)
@@ -86,13 +98,19 @@ class NmfHyperEstimator(BaseNmfEstimator):
                 break
             alpha = alpha * self.tau
         # print(i, "alpha", alpha, diff, alpha * t)
+
+        self.amijo_iter_alpha += i
+        self.sum_alpha += alpha
         return alpha
 
     def armijo_search_R(self, X, D, R, dR):
+        self.amijo_call_beta += 1
+
         m = -np.linalg.norm(dR.T @ dR)
         beta = self.beta0
         t = -self.c * m
         diff = -np.inf
+        i = 0
         for i in range(self.max_armijo):
             diff = self.loss(X, D, R) - self.loss(X, D, R - beta * dR)
             # print(i, "beta", beta, diff, beta * t)
@@ -100,4 +118,17 @@ class NmfHyperEstimator(BaseNmfEstimator):
                 break
             beta = beta * self.tau
         # print(i, "beta", beta, diff, beta * t)
+
+        self.amijo_iter_beta += i
+        self.sum_beta += beta
         return beta
+
+    @property
+    def amijo_stats_alpha(self):
+        return {"avg_alpha": self.sum_alpha / self.amijo_call_alpha,
+                "avg_iter": self.amijo_iter_alpha / self.amijo_call_alpha}
+
+    @property
+    def amijo_stats_beta(self):
+        return {"avg_beta": self.sum_beta / self.amijo_call_beta,
+                "avg_iter": self.amijo_iter_beta / self.amijo_call_beta}

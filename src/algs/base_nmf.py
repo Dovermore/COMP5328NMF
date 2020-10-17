@@ -90,7 +90,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
     def _terminate(self, X, D, R, next_D, next_R):
         return np.array_equal(self.R, next_R) and np.array_equal(self.D, next_D)
 
-    def encode(self, X, y=None):
+    def transform(self, X, y=None):
         """
         Takes input and transform according to fitted model
         """
@@ -112,12 +112,12 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
             return self.D @ R
         return R
 
-    def fit_transform(self, X, y=None, **fit_params):
+    def fit_transform(self, X, **fit_params):
         self.fit(X, **fit_params)
         # Fit then return the lower dimension R values
         if self.output_image:
             return self.D @ self.R
-        return self.D
+        return self.R
 
     def get_next_R(self, X, D, R):
         """
@@ -137,4 +137,4 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
 
     @property
     def components_(self):
-        return self.R
+        return self.D

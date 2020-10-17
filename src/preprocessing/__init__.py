@@ -1,2 +1,2 @@
-from .saltnpepper import noise
-from .preprocess import preprocess
+from .noise import SaltNPepper
+from .scaler import ImageNormalizer
