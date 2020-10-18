@@ -12,7 +12,7 @@ class ImageNormalizer(TransformerMixin):
         self.min = min
         self.max = max
 
-    def fit(self, X, y=None, override=True):
+    def fit(self, X, y=None, override=False):
         if override or self.min is None or self.max is None:
             self.min = np.ndarray.min(X)
             self.max = np.ndarray.max(X)
