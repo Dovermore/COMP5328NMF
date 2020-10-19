@@ -45,7 +45,7 @@ class NmfHyperEstimator(BaseNmfEstimator):
     def _terminate(self, X, R, D, next_R, next_D):
         if self.loss(X, D, R) - self.loss(X, next_D, next_R) < 0:
             self.stop_counter += 1
-        if self.stop_counter >= 100:
+        if self.stop_counter >= 20:
             return True
         return False
 
