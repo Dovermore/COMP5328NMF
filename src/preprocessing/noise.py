@@ -3,8 +3,8 @@ from sklearn.base import TransformerMixin
 
 
 # https://stackoverflow.com/questions/22937589/how-to-add-noise-gaussian-salt-and-pepper-etc-to-image-in-python-with-opencv
-# The following class deals with creating salt and pepper noise which
-# controlled by 2 parameters.
+# The following class deals with creating salt and pepper noise
+# which is controlled by 2 parameters.
 # Parameters: p for noise level(0-1), r for salt/pepper ratio (0-1)
 class SaltNPepper(TransformerMixin):
     def __init__(self, p, r):
@@ -14,7 +14,6 @@ class SaltNPepper(TransformerMixin):
     def fit(self, X, y=None):
         return self
 
-    # Salt and pepper algs here.
     def transform(self, X):
         X = X.T
         out = np.copy(X)
@@ -33,9 +32,11 @@ class SaltNPepper(TransformerMixin):
             img[coords] = 0
         return out.T
 
-
+# The following class deals with creating Gaussian noise
+# which is controlled by 2 parameters.
+# mean and std
 class Gaussian(TransformerMixin):
-    def __init__(self, mean=0, sigma=20):
+    def __init__(self, mean=0, sigma=0.2):
         self.mean = mean
         self.sigma = sigma
 

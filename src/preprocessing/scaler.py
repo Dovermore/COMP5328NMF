@@ -1,7 +1,6 @@
 # The following class deals with all the pre-processing steps to be done on the
 # image data
 
-# Author: Lupita Sahu
 import numpy as np
 from sklearn.base import TransformerMixin
 
@@ -18,7 +17,6 @@ class ImageNormalizer(TransformerMixin):
             self.max = np.ndarray.max(X)
         return self
 
-    # Salt and pepper algs here.
     def transform(self, X):
         range = self.max - self.min
         X = (X - self.min) / range
