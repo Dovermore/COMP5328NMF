@@ -48,4 +48,4 @@ class NmfL1Estimator(BaseNmfEstimator):
         """
         use the default l1 loss
         """
-        return np.sum(np.abs(X - D @ R))
+        return np.sum(np.abs(X - D.dot(R)))
