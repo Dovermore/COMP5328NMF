@@ -25,7 +25,7 @@ class NmfL1Estimator(BaseNmfEstimator):
         denom_D = (W * D.dot(R)).dot(R.T)
         denom_D[denom_D == 0] = np.finfo(np.float32).eps
 
-        next_D = D * ((W * X).dot(R.T))/((W * D.dot(R)).dot(R.T))
+        next_D = D * ((W * X).dot(R.T)) / denom_D
         return next_D
 
     def get_next_R(self, X, D, R):
