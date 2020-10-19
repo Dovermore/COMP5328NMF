@@ -20,7 +20,6 @@ class SaltNPepper(TransformerMixin):
 
         num_salt = np.ceil(self.p * X[0].size * self.r)
         num_pepper = np.ceil(self.p * X[0].size * (1. - self.r))
-        print(num_pepper, num_salt)
         for img in out:
             # Salt mode
             coords = tuple(np.random.randint(0, i - 1, int(num_salt))
