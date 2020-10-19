@@ -34,8 +34,6 @@ def load_data(root='data/CroppedYaleB', reduce=4):
             # reduce computation complexity.
             img = img.resize([s//reduce for s in img.size])
 
-            # TODO: preprocessing.
-
             # convert image to numpy array.
             img = np.asarray(img).reshape((-1,1))
 
