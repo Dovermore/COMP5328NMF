@@ -19,16 +19,17 @@ class SaltNPepper(TransformerMixin):
         X = X.T
         out = np.copy(X)
 
-        num_pepper = np.ceil(self.p * X[0].size * (1. - self.r))
         num_salt = np.ceil(self.p * X[0].size * self.r)
+        num_pepper = np.ceil(self.p * X[0].size * (1. - self.r))
+        print(num_pepper, num_salt)
         for img in out:
             # Salt mode
-            coords = tuple([np.random.randint(0, i - 1, int(num_salt))
-                            for i in img.shape])
-            img[coords] = 1
+            coords = tuple(np.random.randint(0, i - 1, int(num_salt))
+                            for i in img.shape)
+            img[coords] = 255
             # Pepper mode
-            coords = tuple([np.random.randint(0, i - 1, int(num_pepper))
-                            for i in img.shape])
+            coords = tuple(np.random.randint(0, i - 1, int(num_pepper))
+                            for i in img.shape)
             img[coords] = 0
         return out.T
 
