@@ -7,6 +7,7 @@ from .svd_init import svd_init
 import numpy as np
 
 
+""" The logic are pretty simple in this case, so I didn't add much comments """
 class BaseNmfEstimator(BaseEstimator, TransformerMixin):
     def __init__(self,
                  n_components=2,
@@ -16,7 +17,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
                  verbose=0,
                  log_interval=np.inf):
         """
-        TODO: docstring
+        Initialises the nmf estimator
         """
         # store hyper parameters
         self.n_components = n_components
@@ -32,7 +33,6 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
 
     def init_DR(self, X):
         """
-        TODO: docstring
         Initializes R and D matrix from give input matrix X
         """
         # d: input feature dimension
@@ -66,7 +66,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         """
-        TODO
+        Fit the model for given input X
         """
         # Initialize R and D
         self.init_DR(X)
