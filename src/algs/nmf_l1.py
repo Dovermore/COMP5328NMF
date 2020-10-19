@@ -20,7 +20,7 @@ class NmfL1Estimator(BaseNmfEstimator):
         This is the update rule for l1
         """
         eps = X.var() / D.shape[1]
-        W = 1 / (np.sqrt(np.square(X - D.dot(R))) + eps ** 2)
+        W = 1 / ((X - D @ R) + eps ** 2)
 
         denom_D = (W * D.dot(R)).dot(R.T)
         denom_D[denom_D == 0] = np.finfo(np.float32).eps
@@ -40,7 +40,7 @@ class NmfL1Estimator(BaseNmfEstimator):
         denom_R = D.T.dot(W * D.dot(R))
         denom_R[denom_R == 0] = np.finfo(np.float32).eps
 
-        next_R = R = R * (D.T.dot(W * X)) / denom_R
+        next_R = R * (D.T.dot(W * X)) / denom_R
         return next_R
 
     @classmethod
