@@ -35,15 +35,15 @@ class SaltNPepper(TransformerMixin):
 # which is controlled by 2 parameters.
 # mean and std
 class Gaussian(TransformerMixin):
-    def __init__(self, mean=0, sigma=0.2):
+    def __init__(self, mean=0, sigma=20):
         self.mean = mean
         self.sigma = sigma
 
     def fit(self, X, y=None):
         return self
 
-    # Salt and pepper algs here.
     def transform(self, X):
         """Add Gaussian noise to an image"""
         out = X + np.random.normal(self.mean, self.sigma, X.shape)
+        out = np.clip(out, 0, 255)
         return out
