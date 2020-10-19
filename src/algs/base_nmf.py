@@ -3,17 +3,24 @@
 
 
 from sklearn.base import BaseEstimator, TransformerMixin
+from .svd_init import svd_init
 import numpy as np
 
 
 class BaseNmfEstimator(BaseEstimator, TransformerMixin):
-    def __init__(self, n_components=2, max_iter=200, output_image=False,
-                 verbose=0, log_interval=np.inf):
+    def __init__(self,
+                 n_components=2,
+                 init=None,
+                 max_iter=200,
+                 output_image=False,
+                 verbose=0,
+                 log_interval=np.inf):
         """
         TODO: docstring
         """
         # store hyper parameters
         self.n_components = n_components
+        self.init = init.lower() if isinstance(init, str) else init
         self.max_iter = max_iter
         self.verbose = verbose
         self.output_image = output_image
@@ -33,8 +40,19 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         d, n = X.shape
 
         # Initialize D and R usd in the fitting process
-        self.D = np.abs(np.random.randn(d, self.n_components))
-        self.R = np.abs(np.random.randn(self.n_components, n))
+        if self.init is None or self.init == "random":
+            factor = np.sqrt(X.mean() / self.n_components)
+            self.D = np.abs(np.random.randn(d, self.n_components)) * factor
+            self.R = np.abs(np.random.randn(self.n_components, n)) * factor
+        elif self.init == "zero":
+            self.D = np.zeros((d, self.n_components))
+            self.R = np.zeros((self.n_components, n))
+        elif self.init == "svd":
+            self.D, self.R = svd_init(X, p=self.n_components)
+        else:
+            raise NotImplementedError(f"Found unknown init method {self.init}."
+                                      + "Choices are: None, 'random', 'zero', "
+                                      + "'svd'")
 
     @classmethod
     def loss(cls, X, D, R):
@@ -67,11 +85,11 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
                 if self.verbose > 1:
                     print("                |  avgD: %-10.3f, avgR: %-10.3f" %
                           (D_avg, R_avg))
-            next_R, next_D = self._update_DR(X)
+            next_D, next_R = self._update_DR(X)
             iter += 1
 
             # arrive at stable values, break the loop
-            if self._terminate(X, self.R, self.D, next_R, next_D):
+            if self._terminate(X, self.D, self.R, next_D, next_R):
                 break
 
             # else assign and continue to next iteration
@@ -85,7 +103,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         next_R = self.get_next_R(X, self.D, self.R)
         # get Dn+1 based on Rn+1, Dn
         next_D = self.get_next_D(X, self.D, next_R)
-        return next_R, next_D
+        return next_D, next_R
 
     def _terminate(self, X, D, R, next_D, next_R):
         return np.array_equal(self.R, next_R) and np.array_equal(self.D, next_D)

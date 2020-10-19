@@ -21,3 +21,8 @@ class ImageNormalizer(TransformerMixin):
         range = self.max - self.min
         X = (X - self.min) / range
         return X
+
+    def invtransform(self, X):
+        range = self.max - self.min
+        X = X * range + self.min
+        return X

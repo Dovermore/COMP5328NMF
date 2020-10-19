@@ -13,11 +13,23 @@ class NmfHyperEstimator(BaseNmfEstimator):
     For now only the function for updating D, R, loss should be updated
     """
 
-    def __init__(self, n_components=2, tau=0.5, c=0.5, alpha0=1, beta0=1,
-                 max_armijo=100, max_iter=200, output_image=False,
-                 verbose=0, log_interval=np.inf):
-        super().__init__(n_components=n_components, max_iter=max_iter,
-                         output_image=output_image, verbose=verbose,
+    def __init__(self,
+                 n_components=2,
+                 tau=0.5,
+                 c=0.5,
+                 alpha0=1,
+                 beta0=1,
+                 init="random",
+                 max_armijo=100,
+                 max_iter=200,
+                 output_image=False,
+                 verbose=0,
+                 log_interval=np.inf):
+        super().__init__(n_components=n_components,
+                         init=init,
+                         max_iter=max_iter,
+                         output_image=output_image,
+                         verbose=verbose,
                          log_interval=log_interval)
         self.tau = tau
         self.c = c
@@ -37,12 +49,11 @@ class NmfHyperEstimator(BaseNmfEstimator):
         self.amijo_iter_beta = 0
         self.amijo_call_beta = 0
 
-    def _update_RD(self, X):
-        next_R = self.get_next_R(X, self.D, self.R)
+    def _update_DR(self, X):
         next_D = self.get_next_D(X, self.D, self.R)
-        return next_R, next_D
-
-    def _terminate(self, X, R, D, next_R, next_D):
+        next_R = self.get_next_R(X, self.D, self.R)
+        return next_D, next_R
+    def _terminate(self, X, D, R, next_D, next_R):
         if self.loss(X, D, R) - self.loss(X, next_D, next_R) < 0:
             self.stop_counter += 1
         if self.stop_counter >= 20:
