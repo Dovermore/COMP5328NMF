@@ -82,7 +82,7 @@ def benchmark(X, Y, scaler,
         X_noise = noise.fit_transform(X)
         if scaler is not None:
             # preprocess data
-            X = scaler.fit_transform(X)
+            X_noise = scaler.fit_transform(X_noise)
         print(indent("Noise: " + str(noise_kwargs), 0))
         for i, subset_idx in enumerate(subset_idxs):
             print(indent("Trail: " + str(i), 4))
