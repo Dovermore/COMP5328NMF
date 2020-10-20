@@ -75,7 +75,7 @@ def benchmark(X, Y, scaler,
     # Prepare subseting
     subset_idxs = []
     for n in range(n_trials):
-        subset_idxs.append(np.random.choice(range(X.shape[1]), size=int(0.9 * X.shape[1]), replace=False))
+        subset_idxs.append(np.random.choice(range(X.shape[1]), size=int(pc_sample * X.shape[1]), replace=False))
     # preprocess data
     X = scaler.fit_transform(X)
 
