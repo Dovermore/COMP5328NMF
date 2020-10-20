@@ -10,6 +10,7 @@ class ImageNormalizer(TransformerMixin):
     def __init__(self, min=0, max=255):
         self.min = min
         self.max = max
+        self.adaptive = False
         if self.min is None or self.max is None:
             self.adaptive = True
 
