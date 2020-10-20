@@ -10,9 +10,11 @@ class ImageNormalizer(TransformerMixin):
     def __init__(self, min=0, max=255):
         self.min = min
         self.max = max
+        if self.min is None or self.max is None:
+            self.adaptive = True
 
     def fit(self, X, y=None, override=False):
-        if override or self.min is None or self.max is None:
+        if override or self.adaptive:
             self.min = np.ndarray.min(X)
             self.max = np.ndarray.max(X)
         return self
