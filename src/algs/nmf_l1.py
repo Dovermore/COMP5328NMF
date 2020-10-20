@@ -1,5 +1,6 @@
 # This file holds NMF algorithm with l1 norm loss
 # Author: Calvin Huang (zhuq9812) & Matthew Dong (mdon9995)
+# Special Thanks: jordancoding13
 
 import numpy as np
 from .base_nmf import BaseNmfEstimator
