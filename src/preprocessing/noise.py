@@ -45,5 +45,4 @@ class Gaussian(TransformerMixin):
     def transform(self, X):
         """Add Gaussian noise to an image"""
         out = X + np.random.normal(self.mean, self.sigma, X.shape)
-        out = np.clip(out, 0, 255)
         return out
