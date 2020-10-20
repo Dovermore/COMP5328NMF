@@ -76,12 +76,13 @@ def benchmark(X, Y, scaler,
     subset_idxs = []
     for n in range(n_trials):
         subset_idxs.append(np.random.choice(range(X.shape[1]), size=int(pc_sample * X.shape[1]), replace=False))
-    # preprocess data
-    X = scaler.fit_transform(X)
 
     for noise, noise_kwargs in noises:
         # Noise outer loop to keep it consistent between runs
         X_noise = noise.fit_transform(X)
+        if scaler is not None:
+            # preprocess data
+            X = scaler.fit_transform(X)
         print(indent("Noise: " + str(noise_kwargs), 0))
         for i, subset_idx in enumerate(subset_idxs):
             print(indent("Trail: " + str(i), 4))
