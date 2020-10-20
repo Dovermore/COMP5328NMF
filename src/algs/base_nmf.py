@@ -106,7 +106,7 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         return next_D, next_R
 
     def _terminate(self, X, D, R, next_D, next_R):
-        return np.array_equal(self.R, next_R) and np.array_equal(self.D, next_D)
+        return np.allclose(self.D, next_D) and np.allclose(self.R, next_R)
 
     def transform(self, X, y=None):
         """
