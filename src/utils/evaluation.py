@@ -61,8 +61,8 @@ def benchmark(X, Y, scaler,
         metrics_names = [m.__name__ for m in metrics]
 
     evaluations = pd.DataFrame(columns =
-                               ["alg", "n_components", "kwargs", "noise_id", "noise_level",
-                                "ratio", "trial_id"] + metrics_names)
+                               ["alg", "n_components", "kwargs", "noise_id", "trial_id"] 
+                               + metrics_names)
     if isinstance(all_n_components, int):
         all_n_components = [all_n_components]
 
