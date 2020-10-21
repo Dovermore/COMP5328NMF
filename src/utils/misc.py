@@ -1,6 +1,10 @@
+# Author: Advanced Machine Learning Subject and Calvin Huang
 import os
 import numpy as np
 from PIL import Image
+import datetime
+from pathlib import Path
+
 
 def load_data(root='data/CroppedYaleB', reduce=4):
     """ 
@@ -91,3 +95,26 @@ def load_data_AR(root='data/CroppedAR', reduce=3):
     labels = np.array(labels)
     
     return images, labels
+
+
+def get_current_time():
+    return datetime.datetime.now().strftime("%m%d%H%M")
+
+
+def check_create_parent(path):
+    """
+    Check and create the parent path of a given file path
+    """
+    path = Path(path)
+    if not (path.parent.exists() and path.parent.is_dir()):
+        path.parent.mkdir(parents=True, exist_ok=False)
+    return path
+
+def check_create_dir(path):
+    """
+    Check and create the path of a given directory path
+    """
+    path = Path(path)
+    if not (path.exists() and path.is_dir()):
+        path.mkdir(parents=True, exist_ok=False)
+    return path
