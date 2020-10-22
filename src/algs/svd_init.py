@@ -5,6 +5,17 @@ import numpy as np
 
 
 def svd_init(X, p=None, info=0.9):
+    """
+    Defines SVD init strategy for MNF algorithm
+
+    Args:
+        X: Input data
+        p: Number of hidden_dimensions to use
+        info: The mount of information ot retain
+
+    Returns:
+
+    """
     u, s, vh = np.linalg.svd(X, full_matrices=True)
     if p is None:
         sum_s = np.sum(s)
