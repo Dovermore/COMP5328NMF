@@ -9,6 +9,15 @@ from sklearn.metrics import normalized_mutual_info_score
 
 
 def assign_cluster_label(X, Y):
+    """
+    Assigns the label to from cluster of X to classes present in Y
+    Args:
+        X: Encoded data
+        Y: Ccorresponding Labels
+
+    Returns:
+        Prediction of cluster from input data
+    """
     kmeans = KMeans(n_clusters=len(set(Y))).fit(X)
     Y_pred = np.zeros(Y.shape)
     for i in set(kmeans.labels_):
@@ -18,6 +27,16 @@ def assign_cluster_label(X, Y):
 
 
 def make_grid_alg_kwargs(alg, **kwargs):
+    """
+    Creates a grid of arguments to feed benchmark with the given algorithm
+
+    Args:
+        alg: the algorithm to use
+        **kwargs: Dictionary of arrays of parameters to do grid test on
+
+    Returns:
+        list to feed into benchmark
+    """
     keys = []
     values_list = []
     for key, values in kwargs.items():
@@ -35,18 +54,30 @@ def make_grid_alg_kwargs(alg, **kwargs):
 
 
 def indent(text, amount, ch=' '):
-        return textwrap.indent(text, amount * ch)
+    """
+    Indents a given text
+    """
+    return textwrap.indent(text, amount * ch)
 
 
 def rre_score(model, X, Y, Y_pred, W, H):
+    """
+    Relative reconstruction error
+    """
     return np.linalg.norm(X - W.dot(H)) / np.linalg.norm(X)
 
 
 def acc_score(model, X, Y, Y_pred, W, H):
+    """
+    Accuracy
+    """
     return accuracy_score(Y, Y_pred)
 
 
 def nmi_score(model, X, Y, Y_pred, W, H):
+    """
+    Normalized mutual information
+    """
     return normalized_mutual_info_score(Y, Y_pred)
 
 
@@ -55,7 +86,24 @@ def benchmark(X, Y, scaler,
               noise_kwargs_pairs, # noise configs
               metrics, metrics_names=None, # evaluations
               n_trials=5, pc_sample=0.9): # sampling configs
-    """Benchmark algs and output long form evaluation results"""
+    """
+    Complete grid style benchmark of algs and output long form evaluation results
+
+    Args:
+        X: Input array
+        Y: Labels
+        scaler: Scler to use
+        alg_kwargs_pairs: Pairs of nmf algorithms and parameters to test
+        all_n_components: list of component number to use
+        noise_kwargs_pairs: Pairs of noise algorithms and parameters to test
+        metrics: metrics to evaluate the model with
+        metrics_names: names of these metrics
+        n_trials: Number of trials to run
+        pc_sample: percent of sample to sample each trial
+
+    Returns:
+        A long form dataframe with all the experiment results recorded
+    """
     # Prepare column names in data frame
     if metrics_names is None:
         metrics_names = [m.__name__ for m in metrics]

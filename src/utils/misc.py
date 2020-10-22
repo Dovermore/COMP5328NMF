@@ -98,6 +98,10 @@ def load_data_AR(root='data/CroppedAR', reduce=3):
 
 
 def get_current_time():
+    """
+    Returns:
+        format current time in string
+    """
     return datetime.datetime.now().strftime("%m%d%H%M")
 
 

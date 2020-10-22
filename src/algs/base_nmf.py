@@ -1,5 +1,13 @@
-# This file holds NMF algorithm with l2 norm loss
-# Author: Calvin Huang (zhuq9812)
+"""
+File: base_nmf.py
+Author: Calvin Huang
+Email: zhua9812@uni.sydney.edu.au
+Github: https://github.com/dovermore
+Description: This is part of the assignment one for Advanced machine learning
+             it integrates sklearn like interface and constructs basic training
+             framwork.
+"""
+
 
 
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -7,8 +15,12 @@ from .svd_init import svd_init
 import numpy as np
 
 
-""" The logic are pretty simple in this case, so I didn't add much comments """
 class BaseNmfEstimator(BaseEstimator, TransformerMixin):
+    """ The logic are pretty simple in this case, so I didn't add much comments
+        This class tries to immitate how sklearn model works so we are able to
+        easily design evaluation funciton with sklearn model to sort of verify
+        the correctness of the model
+    """
     def __init__(self,
                  n_components=2,
                  init=None,
@@ -17,7 +29,15 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
                  verbose=0,
                  log_interval=np.inf):
         """
-        Initialises the nmf estimator
+        Constructor of Base NMF estimator class
+
+        Args:
+            n_components: number of hidden components
+            init: the initialisation strategy used
+            max_iter: maximum number of iteration to perform
+            output_image: If the fit_transform should produce the reconstructed image instead of encoding
+            verbose: The verbosity of algorithm during training. 1 for loss monitoring, 2 for parameter monitoring
+            log_interval: The interval of which to log the algorithm. (only used when verbosity is not 0)
         """
         # store hyper parameters
         self.n_components = n_components
@@ -34,6 +54,9 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
     def init_DR(self, X):
         """
         Initializes R and D matrix from give input matrix X
+
+        Args:
+            X: Input array
         """
         # d: input feature dimension
         # n: number of examples
@@ -58,6 +81,11 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
     def loss(cls, X, D, R):
         """
         Defaulting to l2 loss for good measure
+
+        Args:
+            X: Input array
+            D: Dictionary array (W in other context)
+            R: Representation array (H in other context)
         """
         # residual = X - D @ R
         residual = X - D @ R
@@ -67,6 +95,10 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         """
         Fit the model for given input X
+
+        Args:
+            X: Input array (shape m x n, where m is feature_size, n is sample size)
+            y: not used
         """
         # Initialize R and D
         self.init_DR(X)
@@ -98,7 +130,12 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         return self
 
     def _update_DR(self, X):
-        """Default updating option is to update R then based on that update D"""
+        """
+        Default updating option is to update R then based on that update D
+
+        Args:
+            X: Input array
+        """
         # get Rn+1 based on Rn, Dn
         next_R = self.get_next_R(X, self.D, self.R)
         # get Dn+1 based on Rn+1, Dn
@@ -106,11 +143,31 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         return next_D, next_R
 
     def _terminate(self, X, D, R, next_D, next_R):
+        """
+        Determine if the algorithm should terminate from the given updates
+
+        Args:
+            X: Input array
+            D: Dictionary array
+            R: Representation array
+            next_D: The updated D
+            next_R: The updated R
+
+        Returns:
+            True if should terminate and finish training, False otherwise.
+        """
         return np.allclose(self.D, next_D) and np.allclose(self.R, next_R)
 
     def transform(self, X, y=None):
         """
         Takes input and transform according to fitted model
+
+        Args:
+            X: Input array (shape m x n, where m is feature_size, n is sample size)
+            y: not used
+
+        Returns:
+            The encoded array from X
         """
         # Make sure the model is fitted
         assert self.R.shape != (0, )
@@ -131,6 +188,16 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
         return R
 
     def fit_transform(self, X, **fit_params):
+        """
+        Fit the model and transform the data to encoded state
+
+        Args:
+            X: Input array
+            **fit_params: other parameters to fed into method fit.
+
+        Returns:
+            The representation array of X
+        """
         self.fit(X, **fit_params)
         # Fit then return the lower dimension R values
         if self.output_image:
@@ -155,4 +222,10 @@ class BaseNmfEstimator(BaseEstimator, TransformerMixin):
 
     @property
     def components_(self):
+        """
+        This is added to make the class compatible with sklearn API
+
+        Returns:
+            The dictionary of model
+        """
         return self.D

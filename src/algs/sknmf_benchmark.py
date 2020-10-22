@@ -3,6 +3,11 @@ from sklearn.decomposition import NMF
 
 # Transpose X for correct shape
 class ModifiedNMF:
+    """
+    This class is NOT used in the actual training, but rather converted to same format as
+    the other NMF does to make sure the losses and accuracies are reasonable.
+    """
+
     def __init__(self, *args, **kwargs):
         self.nmf = NMF(*args, **kwargs)
 

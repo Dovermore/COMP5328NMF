@@ -1,13 +1,26 @@
+"""
+File: noise.py
+Author: Calvin Huang/Lupita Sahu
+Github: https://github.com/dovermore
+Description: This is part of the assignment one for Advanced machine learning
+             it integrates sklearn like interface and constructs basic noise adding module.
+"""
 import numpy as np
 from sklearn.base import TransformerMixin
 
 
-# https://stackoverflow.com/questions/22937589/how-to-add-noise-gaussian-salt-and-pepper-etc-to-image-in-python-with-opencv
-# The following class deals with creating salt and pepper noise
-# which is controlled by 2 parameters.
-# Parameters: p for noise level(0-1), r for salt/pepper ratio (0-1)
 class SaltNPepper(TransformerMixin):
+    """
+    This class deals with creating salt and pepper noise which is controlled by 2 parameters.
+    """
     def __init__(self, p, r):
+        """
+        Creates the basic salt and pepper noise data transformer
+
+        Args:
+            p: p for noise level(0-1)
+            r: r for salt/pepper ratio (0-1)
+        """
         self.p = p
         self.r = r
 
@@ -15,6 +28,15 @@ class SaltNPepper(TransformerMixin):
         return self
 
     def transform(self, X):
+        """
+        Add salt and pepper noise to a copy of input data X
+
+        Args:
+            X: Input array
+
+        Returns:
+            X with noise added
+        """
         X = X.T
         out = np.copy(X)
 
@@ -31,11 +53,18 @@ class SaltNPepper(TransformerMixin):
             img[coords] = 0
         return out.T
 
-# The following class deals with creating Gaussian noise
-# which is controlled by 2 parameters.
-# mean and std
 class Gaussian(TransformerMixin):
+    """
+    This class deals with creating salt and pepper noise which is controlled by 2 parameters.
+    """
     def __init__(self, mean=0, sigma=20):
+        """
+        Creates the basic gaussian noise data transformer
+
+        Args:
+            mean: mean of gaussian noise
+            sigma: standard deviation of gaussian noise
+        """
         self.mean = mean
         self.sigma = sigma
 
@@ -43,6 +72,14 @@ class Gaussian(TransformerMixin):
         return self
 
     def transform(self, X):
-        """Add Gaussian noise to an image"""
+        """
+        Add gaussian noise to a copy of input data X
+
+        Args:
+            X: Input array
+
+        Returns:
+            X with noise added
+        """
         out = X + np.random.normal(self.mean, self.sigma, X.shape)
         return out

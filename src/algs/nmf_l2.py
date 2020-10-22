@@ -9,8 +9,6 @@ class NmfL2Estimator(BaseNmfEstimator):
     """
     Base class for nmf l2 estimator. Uses sklearn skeleton for better coherence
     with other parts of the codes.
-
-    For now only the function for updating D, R, loss should be updated
     """
 
     def get_next_D(self, X, D, R):
@@ -18,6 +16,14 @@ class NmfL2Estimator(BaseNmfEstimator):
         Compute the next value of D based on given input, D and R
 
         This is the update rule for l2
+
+        Args:
+            X: Input array
+            D: Dictionary array
+            R: Representation array
+
+        Returns:
+            Updated value of D
         """
         next_D = D * ((X @ R.T) / (D @ R @ R.T))
         return next_D
@@ -27,6 +33,14 @@ class NmfL2Estimator(BaseNmfEstimator):
         Compute the next value of R based on given input, D and R
 
         This is the update rule for l2
+
+        Args:
+            X: Input array
+            D: Dictionary array
+            R: Representation array
+
+        Returns:
+            Updated value of R
         """
         next_R = R * ((D.T @ X) / (D.T @ D @ R))
         return next_R
@@ -35,5 +49,8 @@ class NmfL2Estimator(BaseNmfEstimator):
     def loss(cls, X, D, R):
         """
         use the default l2 loss
+
+        Returns:
+            computed loss according to the formula in paper
         """
         return super().loss(X, D, R)
